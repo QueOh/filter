@@ -24,6 +24,9 @@ import requests
 LEAGUE_NAME = "Phrecia 2.0"
 USER_AGENT = "MyIdolScanner/1.0"
 POESESSID = "YOUR_POESESSID_HERE"  # <-- insert your session id
+# Trade search options
+STATUS_OPTION = "any"  # "any" includes offline listings
+SALE_TYPE = "priced"  # Buyout or Fixed Price
 
 # Affixes grouped by idol base type (exact text as shown in the trade UI)
 AFFIX_NAMES = {
@@ -851,7 +854,7 @@ def fetch_stat_id_map(sess: requests.Session) -> Dict[str, List[str]]:
 def build_search_payload(stat_id: str, base_type: Optional[str] = None) -> Dict:
     payload = {
         "query": {
-            "status": {"option": "online"},
+            "status": {"option": STATUS_OPTION},
             "stats": [
                 {
                     "type": "and",
@@ -873,7 +876,12 @@ def build_search_payload(stat_id: str, base_type: Optional[str] = None) -> Dict:
                     "filters": {
                         "rarity": {"option": "magic"}
                     }
-                }
+                },
+                "trade_filters": {
+                    "filters": {
+                        "sale_type": {"option": SALE_TYPE}
+                    }
+                },
             },
         },
         "sort": {"price": "asc"},
@@ -929,7 +937,7 @@ def fetch_idol_base_types(sess: requests.Session) -> List[str]:
 def build_discovery_payload(base_type: str) -> Dict:
     return {
         "query": {
-            "status": {"option": "online"},
+            "status": {"option": STATUS_OPTION},
             "type": base_type,
             "filters": {
                 "type_filters": {
@@ -941,7 +949,12 @@ def build_discovery_payload(base_type: str) -> Dict:
                     "filters": {
                         "rarity": {"option": "magic"}
                     }
-                }
+                },
+                "trade_filters": {
+                    "filters": {
+                        "sale_type": {"option": SALE_TYPE}
+                    }
+                },
             },
         },
         "sort": {"price": "asc"},
